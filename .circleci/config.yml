@@ -9,6 +9,11 @@ jobs:
       - restore_cache:
           keys: frontend-build
       - run:
+          name: Install dependencies
+          command: |
+            cd frontend
+            npm i
+      - run:
           name: Build Front End
           command: |
             cd frontend
