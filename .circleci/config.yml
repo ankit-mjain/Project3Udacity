@@ -97,7 +97,7 @@ jobs:
           name: Install dependencies
           command: |
             cd frontend
-            npm install
+            npm i -f
       - run:
           name: scan frontend
           command: |
