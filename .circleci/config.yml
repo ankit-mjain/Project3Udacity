@@ -132,7 +132,7 @@ jobs:
 
   send-slack-notifications:
     docker:
-      - image: circleci/slack@4.1
+      - image: cimg/base:stable
     steps:
       - slack/notify:
           custom: |
