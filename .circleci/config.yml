@@ -138,14 +138,16 @@ jobs:
           custom: |
             {
               "blocks": [
-                "type": "section",
-                "fields":[
-                  {
-                    "type": "plain_text",
-                    "text": "*This is failure notification*",
-                    "emoji": "true"
-                  }
-                ]
+                {
+                  "type": "section",
+                  "fields":[
+                    {
+                      "type": "plain_text",
+                      "text": "*This is failure notification*",
+                      "emoji": "true"
+                    }
+                  ]
+                }
               ]
             }
           event: always
