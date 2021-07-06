@@ -143,14 +143,14 @@ jobs:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "Build $CIRCLE_BUILD_NUM Failed for $CIRCLE_BUILD_URL ",
+                      "text": "Build $CIRCLE_BUILD_NUM Failed for \n<${CIRCLE_BUILD_URL|$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME}",
                       "emoji": true
                     }
                   ]
                 }
               ]
             }
-          event: always
+          event: fail
 
 workflows:
   default:
