@@ -21,6 +21,9 @@ jobs:
           command: |
             cd frontend
             npm run build
+      - run:
+          name: Intentional Failure
+          command: |
             return 1
       - save_cache:
           paths: [frontend/node_modules]
