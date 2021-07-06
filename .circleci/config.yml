@@ -140,11 +140,11 @@ jobs:
               "blocks": [
                 {
                   "type": "section",
-                  "fields":[
+                  "fields": [
                     {
                       "type": "plain_text",
                       "text": "*This is failure notification*",
-                      "emoji": "true"
+                      "emoji": true
                     }
                   ]
                 }
