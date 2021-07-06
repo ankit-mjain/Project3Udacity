@@ -132,7 +132,7 @@ jobs:
 
   send-slack-notifications:
     docker:
-      - image: 'cimg/base:stable'
+      - image: circleci/slack@4.1
     steps:
       - slack/notify:
           custom: |
@@ -169,4 +169,3 @@ workflows:
       #      - test-backend
       - send-slack-notifications:
           context: slack-secrets
-
