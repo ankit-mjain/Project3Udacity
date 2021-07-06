@@ -51,11 +51,14 @@ jobs:
       - restore_cache:
           keys: frontend-test
       - run:
-          name: Test frontend
+          name: Install dependencies
           command: |
             cd frontend
             npm install
-            npm run prettier
+      - run:
+          name: Test frontend
+          command: |
+            cd frontend
             npm run test
       - save_cache:
           paths: [frontend/node_modules]
