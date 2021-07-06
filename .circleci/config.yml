@@ -21,10 +21,6 @@ jobs:
           command: |
             cd frontend
             npm run build
-      - run:
-          name: Intentional Failure
-          command: |
-            exit 1
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -138,7 +134,8 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
-      - slack/notify:
+      - run: exit 1
+      - slack/status:
           custom: |
             {
               "blocks": [
@@ -159,7 +156,7 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
+      #- build-frontend
       #- build-backend 
       #- test-frontend:
       #    requires: 
