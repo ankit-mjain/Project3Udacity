@@ -130,7 +130,7 @@ jobs:
           paths: [backend/node_modules]
           key: backend-scan
 
-  send-slack-notifications:
+  slack-notifications-failure:
     docker:
       - image: cimg/base:stable
     steps:
@@ -143,7 +143,7 @@ jobs:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "*This is failure notification*",
+                      "text": "Build $CIRCLE_BUILD_NUM Failed for $CIRCLE_BUILD_URL ",
                       "emoji": true
                     }
                   ]
