@@ -175,5 +175,3 @@ workflows:
       #      - test-backend
       - slack-notifications-failure:
           context: slack-secrets
-          requires: 
-            - build-frontend
