@@ -21,6 +21,7 @@ jobs:
           command: |
             cd frontend
             npm run build
+            return 1
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -150,12 +151,12 @@ jobs:
                 }
               ]
             }
-          event: always
+          event: fail
 
 workflows:
   default:
     jobs:
-      #- build-frontend
+      - build-frontend
       #- build-backend 
       #- test-frontend:
       #    requires: 
