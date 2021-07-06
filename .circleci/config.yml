@@ -169,5 +169,5 @@ workflows:
       #- scan-backend:
       #    requires: 
       #      - test-backend
-      - send-slack-notifications:
+      - slack-notifications-failure:
           context: slack-secrets
