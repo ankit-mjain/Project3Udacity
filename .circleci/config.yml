@@ -185,10 +185,10 @@ jobs:
               --tags project=Udapeople \
                --stack-name "Udapeople-backend-${CIRCLE_WORKFLOW_ID}" \
                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"  
-            ec2-url = $(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            ec2-url=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Name, Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID}" --output text )
-            echo "ec2-url = $ec2-url"
-            echo "Workflow ID = ${CIRCLE_WORKFLOW_ID}"
+            echo "ec2-url=$ec2-url"
+            echo "Workflow ID=${CIRCLE_WORKFLOW_ID}"
             curl -H Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
               --request PUT --data "$ec2-url" https://api.memstash.io/values/
               exit 1
