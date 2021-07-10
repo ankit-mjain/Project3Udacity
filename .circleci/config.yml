@@ -199,7 +199,7 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-            S3ARN=${aws s3 ls | grep udapeople}
+            S3ARN=$(aws s3 ls | grep udapeople)
             echo "S3ARN=$S3ARN"
             echo "Workflow ID=${CIRCLE_WORKFLOW_ID:0:7}"
             curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
