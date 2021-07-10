@@ -185,22 +185,26 @@ jobs:
               --tags project=Udapeople \
               --stack-name "Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-            ec2_url=$(aws ec2 describe-instances --region ap-south-1 --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            EC2_url=$(aws ec2 describe-instances --region ap-south-1 --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:Name, Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text )
-            echo "ec2_url=$ec2_url"
+            echo "EC2_url=$EC2_url"
             echo "Workflow ID=${CIRCLE_WORKFLOW_ID:0:7}"
             curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
-              --request PUT --data "$ec2_url" https://api.memstash.io/values/myec2_url_${CIRCLE_WORKFLOW_ID:0:7}
-            exit 1
+              --request PUT --data "$EC2_url" https://api.memstash.io/values/myEC2url_${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=Udapeople \
-              --stack-name "Udapeople-frontend-khviah93rhnf"
-              --parameter-overrides ID="khviah93rhnf"
-              exit 1
+              --stack-name "Udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+            S3ARN=${aws s3 ls | grep Udapeople}
+            echo "S3ARN=$S3ARN"
+            echo "Workflow ID=${CIRCLE_WORKFLOW_ID:0:7}"
+            curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
+              --request PUT --data "$S3ARN" https://api.memstash.io/values/myS3SRN_${CIRCLE_WORKFLOW_ID:0:7}
+            exit 1
       - run:
           name: Add back-end ip to ansible inventory
           command: |
