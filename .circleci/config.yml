@@ -189,7 +189,7 @@ jobs:
               --filters "Name=tag:Name, Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID}" --output text )
             echo "ec2_url=$ec2_url"
             echo "Workflow ID=${CIRCLE_WORKFLOW_ID}"
-            curl -H Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
+            curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
               --request PUT --data "$ec2_url" https://api.memstash.io/values/
               exit 1
       - run:
