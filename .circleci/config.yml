@@ -183,15 +183,15 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project=Udapeople \
-               --stack-name "Udapeople-backend-${CIRCLE_WORKFLOW_ID}" \
-               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"  
-            ec2_url=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --stack-name "Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+            ec2_url=$(aws ec2 describe-instances --region ap-south-1 --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Name, Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID}" --output text )
             echo "ec2_url=$ec2_url"
-            echo "Workflow ID=${CIRCLE_WORKFLOW_ID}"
+            echo "Workflow ID=${CIRCLE_WORKFLOW_ID:0:7}"
             curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
-              --request PUT --data "$ec2_url" https://api.memstash.io/values/
-              exit 1
+              --request PUT --data "$ec2_url" https://api.memstash.io/values/myec2_url_${CIRCLE_WORKFLOW_ID:0:7}
+            exit 1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
