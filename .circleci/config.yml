@@ -213,12 +213,37 @@ jobs:
               --filters "Name=tag:Name, Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
-            exit 1
       - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure      
+
+  configure-infrastructure:
+    docker:
+      # Docker image here that supports Ansible 
+      - image: python:3.7-alpine3.11
+    steps:
+      # Checkout code from git 
+      - checkout
+      # Add ssh keys with fingerprint 
+      - add_ssh_keys:
+        fingerprints: [I47:ef:5a:b5:a8:3f:ca:57:7e:39:ec:27:70:96:88:1b]
+      # attach workspace 
+      - attach_workspace:
+          root: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apt add --update ansible
+      - run:
+          name: Configure server
+          command: |
+            # Your code here
+            ansible-playbook -i .circleci/ansible/configure-server.yml .circleci/ansible/configure-server.yml
+            exit 1
+      # Here's where you will add some code to rollback on failure      
+      
 
 workflows:
   default:
