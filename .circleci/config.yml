@@ -212,11 +212,12 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Name, Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text >> .circleci/ansible/inventory.txt
-            cat .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt 
+
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - .circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure      
 
   configure-infrastructure:
@@ -232,7 +233,8 @@ jobs:
             - "I47:ef:5a:b5:a8:3f:ca:57:7e:39:ec:27:70:96:88:1b"
       # attach workspace 
       - attach_workspace:
-          at: ~/
+          at: ~/ 
+
       - run:
           name: Install dependencies
           command: |
@@ -242,7 +244,7 @@ jobs:
           name: Configure server
           command: |
             # Your code here
-            ansible-playbook -i .circleci/ansible/configure-server.yml .circleci/ansible/configure-server.yml
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
             exit 1
       # Here's where you will add some code to rollback on failure      
       
@@ -265,5 +267,5 @@ workflows:
       # - scan-backend:
       #     requires: 
       #       - test-backend 
-      # - deploy-infrastructure
+      - deploy-infrastructure
       - configure-infrastructure
