@@ -236,6 +236,7 @@ jobs:
           name: Install dependencies
           command: |
             apt add --update ansible
+            apt install tar
       - run:
           name: Configure server
           command: |
@@ -263,4 +264,5 @@ workflows:
       # - scan-backend:
       #     requires: 
       #       - test-backend 
-      - deploy-infrastructure
+      # - deploy-infrastructure
+      - configure-infrastructure
