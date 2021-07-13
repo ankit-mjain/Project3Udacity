@@ -269,3 +269,5 @@ workflows:
       #       - test-backend 
       - deploy-infrastructure
       - configure-infrastructure
+            requires: 
+              - deploy-infrastructure
