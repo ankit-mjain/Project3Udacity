@@ -260,6 +260,10 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: Install Dependencies
+          command: |
+            apk add --update npm nodejs curl tar
+      - run:
           name: Run migrations
           command: |
             # Your code here
