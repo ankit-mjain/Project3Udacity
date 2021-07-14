@@ -274,7 +274,8 @@ jobs:
             echo "Host - " $TYPEORM_HOST
             echo "Password - " $TYPEORM_PASSWORD
             echo $TYPEORM_DATABASE
-            touch migrations.txt
+            npm run migrations:revert
+            touch migrations.txt 
             npm run migrations > migrations.txt
             cat migrations.txt
       - run:
