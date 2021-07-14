@@ -267,9 +267,10 @@ jobs:
             # npm cache clean --force
             # npm install latest-version
             npm install 
+            npm install typescript
             # npm update
             # npm audit fix --force
-            npm audit fix --audit-level=critical --force
+            # npm audit fix --audit-level=critical --force
             echo "Host - " $TYPEORM_HOST
             echo "Password - " $TYPEORM_PASSWORD
             echo $TYPEORM_DATABASE
