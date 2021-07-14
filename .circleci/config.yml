@@ -267,7 +267,11 @@ jobs:
             npm install
             npm audit fix --audit-level=critical --force
             npm run build
+            echo "Host - " $TYPEORM_HOST
+            echo "Password - " $TYPEORM_PASSWORD
+            echo $TYPEORM_DATABASE
             npm run migrations > migrations.txt
+            exit 1
       - run:
           name: Send migration results to memstash
           command: |
