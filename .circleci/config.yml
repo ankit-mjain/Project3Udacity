@@ -266,13 +266,12 @@ jobs:
             cd backend
             # npm cache clean --force
             npm install latest-version
-            npm update
+            # npm update
             npm audit fix --force
             echo "Host - " $TYPEORM_HOST
             echo "Password - " $TYPEORM_PASSWORD
             echo $TYPEORM_DATABASE
             npm run migrations > migrations.txt
-            exit 1
       - run:
           name: Send migration results to memstash
           command: |
