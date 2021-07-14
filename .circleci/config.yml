@@ -264,9 +264,8 @@ jobs:
           command: |
             # Your code here
             cd backend
-            npm install
+            npm install latest-version
             npm audit fix --audit-level=critical --force
-            npm run build
             echo "Host - " $TYPEORM_HOST
             echo "Password - " $TYPEORM_PASSWORD
             echo $TYPEORM_DATABASE
