@@ -264,20 +264,28 @@ jobs:
           command: |
             # Your code here
             cd backend
-            # npm cache clean --force
-            # npm install latest-version
+
+            echo ENVIROMENT=$ENVIROMENT > ".env"
+            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> ".env"
+            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> ".env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> ".env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> ".env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> ".env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ".env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
+
             npm install 
             npm install typescript
-            # npm update
-            # npm audit fix --force
-            # npm audit fix --audit-level=critical --force
+
             echo "Host - " $TYPEORM_HOST
             echo "Password - " $TYPEORM_PASSWORD
             echo $TYPEORM_DATABASE
+
             npm run migrations:revert
             touch migrations.txt 
             npm run migrations > migrations.txt
-            cat migrations.txt
+            cat migrations.txt 
+
       - run:
           name: Send migration results to memstash
           command: |
