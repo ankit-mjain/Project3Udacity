@@ -275,6 +275,7 @@ jobs:
             echo "Password - " $TYPEORM_PASSWORD
             echo $TYPEORM_DATABASE
             npm run migrations > migrations.txt
+            cat migrations.txt
       - run:
           name: Send migration results to memstash
           command: |
@@ -286,7 +287,7 @@ jobs:
             else
               curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
                 --request PUT --data "failure" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
-            exit 1
+            fi
      # Here's where you will add some code to rollback on failure      
      
      
