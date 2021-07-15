@@ -409,10 +409,10 @@ jobs:
           name: Get backend url & conduct smoke test
           command: |
             # your code here
-            export API_URL=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/API_URL)
-            echo $API_URL
+            export BACKEND_IP=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/BACKEND_IP)
+            echo $BACKEND_IP
 
-            export ENDPOINT="$API_URL/api/status"
+            export ENDPOINT="https://$BACKEND_IP:3030/api/status"
             echo $ENDPOINT
 
             # if (curl -Is {$ENDPOINT} | head -n 1 | awk '{print $2}') == 200
@@ -457,18 +457,18 @@ workflows:
       # - scan-backend:
       #     requires: 
       #       - test-backend 
-      # - deploy-infrastructure
-      # - configure-infrastructure:
-      #      requires: 
-      #        - deploy-infrastructure
-      # - run-migrations
-      # - deploy-frontend:
-      #     requires: 
-      #       - deploy-infrastructure
-      # - deploy-backend:
-      #     requires: 
-      #       - deploy-infrastructure
-      - smoke-test
-      #     requires:
-      #     - deploy-frontend
-      #     - deploy-backend
+      - deploy-infrastructure
+      - configure-infrastructure:
+           requires: 
+             - deploy-infrastructure
+      - run-migrations
+      - deploy-frontend:
+          requires: 
+            - deploy-infrastructure
+      - deploy-backend:
+          requires: 
+            - deploy-infrastructure
+      - smoke-test:
+          requires:
+          - deploy-frontend
+          - deploy-backend
