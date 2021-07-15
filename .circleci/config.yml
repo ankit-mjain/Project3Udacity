@@ -369,7 +369,7 @@ jobs:
       - checkout
 
       # Add ssh keys with fingerprint
-      - add_ssh_keys
+      - add_ssh_keys:
           fingerprints: 
             - "I47:ef:5a:b5:a8:3f:ca:57:7e:39:ec:27:70:96:88:1b"
       
