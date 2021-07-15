@@ -307,8 +307,46 @@ jobs:
 
             echo "MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}"
             echo "$MEMSTASH_Token"
+
+            echo "Note - Not able to locate the token on memstash.io - Work on it later on"
+
      # Here's where you will add some code to rollback on failure      
      
+  deploy-frontend:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git 
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            yum -y install tar gzip jq npm
+            npm install oauth-sign
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+            BACKEND_IP = aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name, Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output text 
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+            echo "${API_URL}" >> "frontend/.env"
+      - run:
+          name: Deploy frontend objects
+          command: |
+            # your code here
+            npm run build
+
+            aws s3 mb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --region ap-south-1
+            aws s3 sync dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+
+            aws s3 ls s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+
+            echo "S3 bucket name - s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
      
 workflows:
   default:
@@ -328,8 +366,12 @@ workflows:
       # - scan-backend:
       #     requires: 
       #       - test-backend 
-      # - deploy-infrastructure
-      # - configure-infrastructure:
-      #       requires: 
-      #         - deploy-infrastructure
-      - run-migrations
+      - deploy-infrastructure
+      - configure-infrastructure:
+            requires: 
+              - deploy-infrastructure
+      # - run-migrations
+      - deploy-frontend:
+            requires: 
+              - configure-infrastructure
+
