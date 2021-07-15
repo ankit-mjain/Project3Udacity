@@ -326,7 +326,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip jq npm
+            apk add --update tar gzip jq npm curl
             pip install awscli
 
       - run:
@@ -334,13 +334,14 @@ jobs:
           command: |
             # your code here
 
-            export BACKEND_IP=$( curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/BACKEND_IP)
+            export BACKEND_IP=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/BACKEND_IP)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             echo "${API_URL}" >> "frontend/.env"
 
       - run:
           name: Deploy frontend objects
+          working_directory: ./frontend
           command: |
             # your code here
             npm run build
