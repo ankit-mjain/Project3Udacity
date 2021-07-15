@@ -193,8 +193,10 @@ jobs:
             --filters "Name=tag:Name, Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text )
             echo "EC2_url=$EC2_url"
             echo "Workflow ID=${CIRCLE_WORKFLOW_ID:0:7}"
-            curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
-              --request PUT --data "$EC2_url" https://api.memstash.io/values/myEC2url_${CIRCLE_WORKFLOW_ID:0:7}
+            # curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
+            #  --request PUT --data "$EC2_url" https://api.memstash.io/values/myEC2url_${CIRCLE_WORKFLOW_ID:0:7}
+            curl -H "Content-Type: text/plain" -H "token: $MEMSTASH_Token" \
+              --request PUT --data "$EC2_url" https://api.memstash.io/values/BACKEND_IP
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -206,8 +208,10 @@ jobs:
             S3ARN=$(aws s3 ls | grep udapeople)
             echo "S3ARN=$S3ARN"
             echo "Workflow ID=${CIRCLE_WORKFLOW_ID:0:7}"
-            curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
-              --request PUT --data "$S3ARN" https://api.memstash.io/values/myS3SRN_${CIRCLE_WORKFLOW_ID:0:7}
+            # curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
+            #   --request PUT --data "$S3ARN" https://api.memstash.io/values/myS3SRN_${CIRCLE_WORKFLOW_ID:0:7}
+            curl -H "Content-Type: text/plain" -H "token: $MEMSTASH_Token" \
+              --request PUT --data "$S3ARN" https://api.memstash.io/values/S3BUCKET_ARN
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -328,25 +332,30 @@ jobs:
           name: Get backend url
           command: |
             # your code here
-            BACKEND_IP = aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name, Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text 
+
+            BACKEND_IP=curl -H "Content-Type: text/plain" -H "token: $MEMSTASH_Token" \
+                    --request GET https://api.memstash.io/values/BACKEND_IP
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             echo "${API_URL}" >> "frontend/.env"
+
+
       - run:
           name: Deploy frontend objects
           command: |
             # your code here
             npm run build
 
-            aws s3 mb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --region ap-south-1
-            aws s3 sync dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+            # aws s3 mb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --region ap-south-1
+            
+            S3BUCKET_ARN=curl -H "Content-Type: text/plain" -H "token: $MEMSTASH_Token" \
+                    --request GET https://api.memstash.io/values/S3BUCKET_ARN
 
-            aws s3 ls s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+            aws s3 sync dist s3://$S3BUCKET_ARN
 
-            echo "S3 bucket name - s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws s3 ls s3://$S3BUCKET_ARN
+
+            echo "S3 bucket name - $S3BUCKET_ARN"
      
 workflows:
   default:
