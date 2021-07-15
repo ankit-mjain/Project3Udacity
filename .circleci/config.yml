@@ -389,6 +389,53 @@ jobs:
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
       
+
+  smoke-test:
+    docker:
+      # Lightweight Docker image 
+      - image: python:3.7-alpine3.11
+    steps:
+      # Checkout code from git
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            apk add --update tar gzip jq npm curl
+            pip install awscli
+
+      - run:
+          name: Get backend url & conduct smoke test
+          command: |
+            # your code here
+            export API_URL=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/API_URL)
+            echo $API_URL
+
+            export ENDPOINT="$API_URL/api/status"
+
+            if (curl -Is {$ENDPOINT} | head -n 1 | awk '{print $2}') == 200
+            then
+              echo "Site is Live"
+            else
+              echo "Site is down"
+            fi
+
+      - run:
+          name: Frontend smoke test.
+          command: |
+            # your code here 
+            export URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-1.amazonaws.com"
+            echo $URL
+
+            if curl -s ${URL} | grep "Welcome"
+            then
+              echo "Frontend test successful"
+            else
+              echo "Frontend test successfully"
+              exit 1
+            fi
+
 workflows:
   default:
     jobs:
@@ -408,14 +455,17 @@ workflows:
       #     requires: 
       #       - test-backend 
       - deploy-infrastructure
-      # - configure-infrastructure:
-      #      requires: 
-      #        - deploy-infrastructure
+      - configure-infrastructure:
+           requires: 
+             - deploy-infrastructure
       # - run-migrations
-      # - deploy-frontend:
-      #     requires: 
-      #       - deploy-infrastructure
+      - deploy-frontend:
+          requires: 
+            - deploy-infrastructure
       - deploy-backend:
           requires: 
             - deploy-infrastructure
-
+      - smoke-test:
+          requires:
+            - deploy-frontend
+            - deploy-backend
