@@ -1,0 +1,56 @@
+---
+- name: "update apt packages"
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: "upgrade packages"
+  become: true
+  apt: 
+    upgrade: yes
+
+- name: "remove dependencies"
+  become: yes
+  apt: 
+    autoremove: yes
+
+- name: "install dependencies"
+  become: yes
+  apt: 
+    pkg: 
+      - nodejs
+      - npm
+    state: latest
+    update_cache: yes
+
+- name: "install pm2"
+  become: yes
+  npm: 
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+- name: "create a new directory"
+  become: yes
+  file:
+    path: ~/backend_temp/
+    state: directory
+
+- name: "extract backend sources"
+  become: yes
+  unarchive:
+    src: ./backend.tar.gz
+    dest: ~/backend_temp/
+
+- name: "install npm"
+  become: yes
+  command: npm install
+  args:
+    chdir: ~/backend_temp/
+
+- name: "start pm2"
+  become: yes
+  command: pm2 start npm -- run start
+  args:
+    chdir: ~/backend_temp/

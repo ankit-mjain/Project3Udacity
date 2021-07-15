@@ -386,6 +386,23 @@ jobs:
           name: Deploy backend
           command: |
             # your code here
+            echo ENVIRONMENT=production > backend/.env
+            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> backend/.env
+            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> backend/.env
+            echo TYPEORM_HOST=$TYPEORM_HOST >> backend/.env
+            echo TYPEORM_PORT=$TYPEORM_PORT >> backend/.env
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> backend/.env
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> backend/.env
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> backend/.env
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> backend/.env
+
+            cat backend/.env
+            pwd
+            tar -cvzf backend.tar.gz ./backend
+
+            ls -ltr
+
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
       
@@ -427,16 +444,15 @@ jobs:
           name: Frontend smoke test.
           command: |
             # your code here 
-            # export URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website.ap-south-1.amazonaws.com"
-            export URL="http://udapeople-c71fff1.s3-website.ap-south-1.amazonaws.com"
+            export URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website.ap-south-1.amazonaws.com"
+            # export URL="http://udapeople-0c53ee2.s3-website.ap-south-1.amazonaws.com"
             echo $URL
 
             if curl -s ${URL} | grep "Welcome"
             then
               echo "Frontend test successful"
             else
-              echo "Frontend test successfully"
-              exit 1
+              echo "Frontend test failed"
             fi
 
 workflows:
