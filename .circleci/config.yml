@@ -327,6 +327,7 @@ jobs:
           name: Install dependencies
           command: |
             yum -y install tar gzip jq npm
+            yum -y npm
 
       - run:
           name: Get backend url
@@ -337,7 +338,6 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             echo "${API_URL}" >> "frontend/.env"
-
 
       - run:
           name: Deploy frontend objects
