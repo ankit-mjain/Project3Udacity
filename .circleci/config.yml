@@ -288,7 +288,7 @@ jobs:
             npm run migrations:revert
 
             touch migrations.txt 
-            npm run migrations > migrations.txt
+            npm run migrations >> migrations.txt
             cat migrations.txt 
 
       - run:
@@ -302,7 +302,9 @@ jobs:
             else
               curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
                 --request PUT --data "failure" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
-            fi
+            fi 
+
+            echo "MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}"
      # Here's where you will add some code to rollback on failure      
      
      
