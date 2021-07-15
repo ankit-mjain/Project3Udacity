@@ -298,12 +298,15 @@ jobs:
             # Your code here
             if grep "has been executed successfully" ./migrations.txt
             then
-              curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "1" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
+            # curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "1" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
+              curl -H "Content-Type: text/plain" -H "token: $MEMSTASH_Token" --request PUT --data "1" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
             else
-              curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "0" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
+            # curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "0" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
+              curl -H "Content-Type: text/plain" -H "token: $MEMSTASH_Token" --request PUT --data "0" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
             fi 
 
             echo "MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}"
+            echo "$MEMSTASH_Token"
      # Here's where you will add some code to rollback on failure      
      
      
