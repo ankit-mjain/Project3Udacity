@@ -338,17 +338,20 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             echo "${API_URL}" >> "frontend/.env"
+            curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data \
+                    "$API_URL" https://api.memstash.io/values/API_URL
 
       - run:
           name: Deploy frontend objects
           working_directory: ./frontend
           command: |
             # your code here
+            export API_URL=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/API_URL)
+            echo $API_URL
+
             npm install
             npm run build
 
-            # aws s3 mb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --region ap-south-1
-            
             export S3BUCKET_NAME=$ (aws s3 ls | grep udapeople | awk '{print $3}'
 
             aws s3 sync dist s3://$S3BUCKET_NAME
