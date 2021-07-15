@@ -413,8 +413,10 @@ jobs:
             echo $API_URL
 
             export ENDPOINT="$API_URL/api/status"
+            echo $ENDPOINT
 
-            if (curl -Is {$ENDPOINT} | head -n 1 | awk '{print $2}') == 200
+            # if (curl -Is {$ENDPOINT} | head -n 1 | awk '{print $2}') == 200
+            if curl -s {$ENDPOINT} 
             then
               echo "Site is Live"
             else
@@ -425,7 +427,8 @@ jobs:
           name: Frontend smoke test.
           command: |
             # your code here 
-            export URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-1.amazonaws.com"
+            # export URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website.ap-south-1.amazonaws.com"
+            export URL="http://udapeople-c71fff1.s3-website.ap-south-1.amazonaws.com"
             echo $URL
 
             if curl -s ${URL} | grep "Welcome"
@@ -454,18 +457,18 @@ workflows:
       # - scan-backend:
       #     requires: 
       #       - test-backend 
-      - deploy-infrastructure
-      - configure-infrastructure:
-           requires: 
-             - deploy-infrastructure
+      # - deploy-infrastructure
+      # - configure-infrastructure:
+      #      requires: 
+      #        - deploy-infrastructure
       # - run-migrations
-      - deploy-frontend:
-          requires: 
-            - deploy-infrastructure
-      - deploy-backend:
-          requires: 
-            - deploy-infrastructure
-      - smoke-test:
-          requires:
-            - deploy-frontend
-            - deploy-backend
+      # - deploy-frontend:
+      #     requires: 
+      #       - deploy-infrastructure
+      # - deploy-backend:
+      #     requires: 
+      #       - deploy-infrastructure
+      - smoke-test
+      #     requires:
+      #     - deploy-frontend
+      #     - deploy-backend
