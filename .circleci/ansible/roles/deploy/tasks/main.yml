@@ -49,9 +49,9 @@
   args:
     chdir: /home/ubuntu/backend_app/backend/
 
-- name: "install npm"
+- name: "build backend"
   become: yes
-  command: npm run build-prod
+  command: npm run build
   args:
     chdir: /home/ubuntu/backend_app/backend/
 
@@ -66,11 +66,10 @@
     export TYPEORM_DATABASE="{{lookup ('env', 'TYPEORM_DATABASE')}}"
     pm2 start main.js --name udapeople-backend
   args:
-    chdir: /home/ubuntu/backend_app/backend/
+    chdir: /home/ubuntu/backend_app/backend/dist/
 
 - name: "start pm2"
   become: yes
   command: pm2 start npm -- run start
   args:
-    chdir: /home/ubuntu/backend_app/backend/
-
+    chdir: /home/ubuntu/backend_app/backend/dist/

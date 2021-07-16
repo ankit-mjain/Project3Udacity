@@ -253,7 +253,8 @@ jobs:
             # Your code here
             export ANSIBLE_LOG_PATH=~/ansible.log
             export ANSIBLE_DEBUG=True
-            ansible-playbook -v -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+            # ansible-playbook -v -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       # Here's where you will add some code to rollback on failure      
       
   run-migrations:
