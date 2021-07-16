@@ -193,10 +193,10 @@ jobs:
             --filters "Name=tag:Name, Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text )
             echo "EC2_url=$EC2_url"
             echo "Workflow ID=${CIRCLE_WORKFLOW_ID:0:7}"
+             curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
+              --request PUT --data "$EC2_url" https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7}
             # curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
-            #  --request PUT --data "$EC2_url" https://api.memstash.io/values/myEC2url_${CIRCLE_WORKFLOW_ID:0:7}
-            curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
-              --request PUT --data "$EC2_url" https://api.memstash.io/values/BACKEND_IP
+            #   --request PUT --data "$EC2_url" https://api.memstash.io/values/BACKEND_IP
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -208,10 +208,10 @@ jobs:
             S3ARN=$(aws s3 ls | grep udapeople)
             echo "S3ARN=$S3ARN"
             echo "Workflow ID=${CIRCLE_WORKFLOW_ID:0:7}"
+             curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
+               --request PUT --data "$S3ARN" https://api.memstash.io/values/myS3SRN_${CIRCLE_WORKFLOW_ID:0:7}
             # curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
-            #   --request PUT --data "$S3ARN" https://api.memstash.io/values/myS3SRN_${CIRCLE_WORKFLOW_ID:0:7}
-            curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" \
-              --request PUT --data "$S3ARN" https://api.memstash.io/values/S3BUCKET_ARN
+            #   --request PUT --data "$S3ARN" https://api.memstash.io/values/S3BUCKET_ARN
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -334,19 +334,21 @@ jobs:
           command: |
             # your code here
 
-            export BACKEND_IP=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/BACKEND_IP)
+            export BACKEND_IP=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request \
+                  GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7})
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             echo "${API_URL}" >> "frontend/.env"
             curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data \
-                    "$API_URL" https://api.memstash.io/values/API_URL
+                    "$API_URL" https://api.memstash.io/values/API_URL_${CIRCLE_WORKFLOW_ID:0:7}
 
       - run:
           name: Deploy frontend objects
           working_directory: ./frontend
           command: |
             # your code here
-            export API_URL=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/API_URL)
+            export API_URL=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request \
+                    GET https://api.memstash.io/values/API_URL_${CIRCLE_WORKFLOW_ID:0:7})
             echo $API_URL
 
             npm install
@@ -426,7 +428,7 @@ jobs:
           name: Get backend url & conduct smoke test
           command: |
             # your code here
-            export BACKEND_IP=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/BACKEND_IP)
+            export BACKEND_IP=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7})
             echo $BACKEND_IP
 
             export ENDPOINT="https://$BACKEND_IP:3030/api/status"
