@@ -49,6 +49,12 @@
   args:
     chdir: /home/ubuntu/backend_app/backend/
 
+- name: "install npm"
+  become: yes
+  command: npm run build-prod
+  args:
+    chdir: /home/ubuntu/backend_app/backend/
+
 - name: "Start backend with pm2"
   shell: |
     export ENVIRONMENT=production
