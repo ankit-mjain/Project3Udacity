@@ -8,7 +8,7 @@
 - name: "extract backend sources"
   become: yes
   unarchive:
-    src: ./backend.tar.gz
+    src: /root/project/backend.tar.gz
     dest: ~/backend_temp/
 
 - name: "install npm"
