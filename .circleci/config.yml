@@ -401,7 +401,8 @@ jobs:
 
             cat backend/.env
             pwd
-            tar -cvzf backend.tar.gz ./backend
+            cd backend
+            tar -cvzf backend.tar.gz .
 
             ls -ltr
 
