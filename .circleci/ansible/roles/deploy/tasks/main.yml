@@ -34,23 +34,23 @@
 - name: "create a new directory"
   become: yes
   file:
-    path: ~/backend_temp/
+    path: /home/ubuntu/backend_app/
     state: directory
 
 - name: "extract backend sources"
   become: yes
   unarchive:
     src: /root/project/backend.tar.gz
-    dest: ~/backend_temp/
+    dest: /home/ubuntu/backend_app/
 
 - name: "install npm"
   become: yes
   command: npm install
   args:
-    chdir: ~/backend_temp/
+    chdir: /home/ubuntu/backend_app/
 
 - name: "start pm2"
   become: yes
   command: pm2 start npm -- run start
   args:
-    chdir: ~/backend_temp/
+    chdir: /home/ubuntu/backend_app/
