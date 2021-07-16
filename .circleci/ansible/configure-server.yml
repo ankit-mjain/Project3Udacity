@@ -25,9 +25,11 @@
       wait_for_connection:
         timeout: 600
 
-      # - name: "install python for Ansible."
+    - name: "install python for Ansible."
       # Your code here
       # raw: sudo apt -y update && sudo apt install -y python
+      # Not installing python as it is already available in AMI
+      raw: sudo apt -y update 
 
   roles:
     # Your code here
