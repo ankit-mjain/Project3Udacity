@@ -591,9 +591,6 @@ jobs:
             else
               echo "Nothing to Cleanup"
             fi
-      - destroy-environment
-      - revert-migrations
-
 workflows:
   default:
     jobs:
