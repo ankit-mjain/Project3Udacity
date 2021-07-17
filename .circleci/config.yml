@@ -632,9 +632,11 @@ workflows:
           requires: 
             - build-backend
       - scan-frontend:
+          context: slack-secrets
           requires: 
             - test-frontend
       - scan-backend:
+          context: slack-secrets
           requires: 
             - test-backend 
       - deploy-infrastructure:
