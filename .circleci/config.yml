@@ -17,12 +17,15 @@ commands:
             echo "Deleting object from the S3 bucket - udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
             aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}/ --recursive
 
+            echo "Deleting S3 bucket"
+            aws s3 rb "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" 
 
             echo "Deleting Frontend Stack - udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
             echo "Deleting Backend Stack - udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -572,7 +575,7 @@ jobs:
 
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-            echo STACKS ${STACKS}
+            echo STACKS ${STACKS[@]}
 
       - run:
           name: Remove old stacks and files
@@ -580,14 +583,20 @@ jobs:
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               # your code here
+              echo OldWorkflowID ${OldWorkflowID}
+
               echo "Deleting backend stack"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
 
               echo "Deleting frontend stack"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
 
-              echo "Deleting S3 bucket"
+              echo "Deleting S3 bucket objects"
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+
+              echo "Deleting S3 bucket"
+              aws s3 rb "s3://udapeople-${OldWorkflowID}" 
+
             else
               echo "Nothing to Cleanup"
             fi
