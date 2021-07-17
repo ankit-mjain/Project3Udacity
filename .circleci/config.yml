@@ -588,11 +588,11 @@ jobs:
               echo "Deleting frontend stack"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
 
+              echo "Deleting frontend stack"
+              aws cloudformation delete-stack --stack-name "udapeople-cloudfront-${OldWorkflowID}"
+
               echo "Deleting S3 bucket objects"
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
-
-              echo "Deleting S3 bucket"
-              aws s3 rb "s3://udapeople-${OldWorkflowID}" 
             else
               echo "Nothing to Cleanup"
             fi
@@ -618,7 +618,9 @@ workflows:
       - configure-infrastructure:
            requires: 
              - deploy-infrastructure
-      - run-migrations
+      - run-migrations:
+           requires: 
+            - configure-infrastructure
       - deploy-frontend:
           requires: 
             - deploy-infrastructure
