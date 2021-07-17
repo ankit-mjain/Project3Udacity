@@ -3,6 +3,52 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.1
 
+commands:
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      # Add parameter here   
+      BUCKETNAME:
+        type: string
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            # Your code here
+            echo "Deleting object from the S3 bucket - udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}/ --recursive
+
+
+            echo "Deleting Frontend Stack - udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws s3 cloudformation delete-stack udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+
+            echo "Deleting Backend Stack - udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws s3 cloudformation delete-stack udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      # Add parameter here     
+    steps:
+      - run:
+          name: Revert migrations
+          # Add when this will run
+          command: |
+            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+              curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "Migration Success" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
+            export SUCCESS=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7})
+            # SUCCESS = 1
+            if(( $SUCCESS=="igration Success" )); 
+            then
+              cd ./backend
+              npm install
+            #  Add revert code here. You can find this in the Getting Started section.
+              npm run migrations:revert
+              exit 1
+            fi
+
+
 jobs:
   build-frontend:
     docker:
@@ -227,6 +273,7 @@ jobs:
           paths:
             - .circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure      
+      - destroy-environment
 
   configure-infrastructure:
     docker:
@@ -256,6 +303,7 @@ jobs:
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
             # ansible-playbook -v -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       # Here's where you will add some code to rollback on failure      
+      - destroy-environment
       
   run-migrations:
     docker:
@@ -318,6 +366,8 @@ jobs:
             echo "Note - Not able to locate the token on memstash.io - Work on it later on"
 
      # Here's where you will add some code to rollback on failure      
+      - destroy-environment
+      - revert-migrations
      
   deploy-frontend:
     docker:
@@ -364,6 +414,9 @@ jobs:
             aws s3 ls s3://$S3BUCKET_NAME
 
             echo "S3 bucket name - $S3BUCKET_NAME"
+
+      - destroy-environment
+      - revert-migrations
      
   deploy-backend:
     docker:
@@ -409,8 +462,10 @@ jobs:
             ls -ltr
 
             ansible-playbook -v -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
+
       # Here's where you will add some code to rollback on failure  
-      
+      - destroy-environment
+      - revert-migrations
 
   smoke-test:
     docker:
@@ -459,6 +514,10 @@ jobs:
             else
               echo "Frontend test failed"
             fi
+          exit 1
+
+      - destroy-environment
+      - revert-migrations
 
 workflows:
   default:
