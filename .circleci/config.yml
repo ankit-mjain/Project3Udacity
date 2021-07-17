@@ -562,7 +562,7 @@ jobs:
       # Checkout code from git
       - checkout
       - run:
-          name: Get old stack workflow id
+          name: Get old stack workflow id & remove the stacks
           command: |
             # your code here
             # export OldWorkflowID="the id here"
@@ -577,9 +577,6 @@ jobs:
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             echo STACKS ${STACKS[@]}
 
-      - run:
-          name: Remove old stacks and files
-          command: |
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               # your code here
