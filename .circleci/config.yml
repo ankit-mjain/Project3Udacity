@@ -367,8 +367,8 @@ jobs:
             echo "Note - Not able to locate the token on memstash.io - Work on it later on"
 
      # Here's where you will add some code to rollback on failure      
-      - destroy-environment
       - revert-migrations
+      - destroy-environment
      
   deploy-frontend:
     docker:
@@ -415,9 +415,8 @@ jobs:
             aws s3 ls s3://$S3BUCKET_NAME
 
             echo "S3 bucket name - $S3BUCKET_NAME"
-
-      - destroy-environment
       - revert-migrations
+      - destroy-environment
      
   deploy-backend:
     docker:
@@ -465,8 +464,8 @@ jobs:
             ansible-playbook -v -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
 
       # Here's where you will add some code to rollback on failure  
-      - destroy-environment
       - revert-migrations
+      - destroy-environment
 
   smoke-test:
     docker:
@@ -516,8 +515,8 @@ jobs:
               echo "Frontend test failed"
             fi
             exit 1
-      - destroy-environment
       - revert-migrations
+      - destroy-environment
 
 workflows:
   default:
