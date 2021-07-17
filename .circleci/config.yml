@@ -518,6 +518,7 @@ jobs:
               echo "Frontend test successful"
             else
               echo "Frontend test failed"
+              return 1
             fi
       
       - destroy-environment
