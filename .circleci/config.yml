@@ -34,17 +34,16 @@ commands:
           # Add when this will run
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            export SUCCESS=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7})
+            SUCCESS=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7})
             echo "$SUCCESS"
-
             echo "Migration revert started! "
 
             # SUCCESS = 1
-            if(( $SUCCESS=="Migration Success" )); 
+            if(( SUCCESS=="Migration Success" )); 
             then
+            #  Add revert code here. You can find this in the Getting Started section.
               cd ./backend
               npm install
-            #  Add revert code here. You can find this in the Getting Started section.
               npm run migrations:revert
               echo "Migration reverted"
             fi
@@ -498,6 +497,8 @@ jobs:
               echo "Site is Live"
             else
               echo "Site is down"
+              - revert-migrations
+              - destroy-environment
             fi
 
       - run:
@@ -508,15 +509,16 @@ jobs:
             # export URL="http://udapeople-0c53ee2.s3-website.ap-south-1.amazonaws.com"
             echo $URL
 
-            if curl -s ${URL} | grep "Welcome"
+            #if curl -s ${URL} | grep "Welcome"
+            if curl -s ${URL} | grep "Welcome1"
             then
               echo "Frontend test successful"
             else
               echo "Frontend test failed"
+              - revert-migrations
+              - destroy-environment
+              exit 1
             fi
-            exit 1
-      - revert-migrations
-      - destroy-environment
 
 workflows:
   default:
