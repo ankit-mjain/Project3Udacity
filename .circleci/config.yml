@@ -36,17 +36,17 @@ commands:
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7})
-            echo "$SUCCESS"
             echo "Migration revert started! "
 
             # SUCCESS = 1
-            if(( SUCCESS=="Migration Success" )); 
+            if(( SUCCESS=="1" )) 
             then
             #  Add revert code here. You can find this in the Getting Started section.
               cd ./backend
               npm install
               npm run migrations:revert
               echo "Migration reverted"
+              exit 1
             fi
 
 jobs:
@@ -354,10 +354,10 @@ jobs:
             if grep "has been executed successfully" ./migrations.txt
             then
             # curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "1" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
-              curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "Migration Success" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
+              curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "1" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
             else
             # curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "0" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
-              curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "Migration Failure" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
+              curl -H "Content-Type: text/plain" -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request PUT --data "0" https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}
             fi 
 
             echo "MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7}"
@@ -366,8 +366,8 @@ jobs:
             echo "Note - Not able to locate the token on memstash.io - Work on it later on"
 
      # Here's where you will add some code to rollback on failure      
-      - revert-migrations
       - destroy-environment
+      - revert-migrations
      
   deploy-frontend:
     docker:
@@ -468,8 +468,8 @@ jobs:
             ansible-playbook -v -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
 
       # Here's where you will add some code to rollback on failure  
-      - revert-migrations
       - destroy-environment
+      - revert-migrations
 
   smoke-test:
     docker:
@@ -502,8 +502,6 @@ jobs:
               echo "Site is Live"
             else
               echo "Site is down"
-              - revert-migrations
-              - destroy-environment
             fi
 
       - run:
@@ -520,10 +518,10 @@ jobs:
               echo "Frontend test successful"
             else
               echo "Frontend test failed"
-              - revert-migrations
-              - destroy-environment
-              exit 1
             fi
+      
+      - destroy-environment
+      - revert-migrations
 
 workflows:
   default:
