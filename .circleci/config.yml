@@ -46,7 +46,6 @@ commands:
               npm install
               npm run migrations:revert
               echo "Migration reverted"
-              exit 1
             fi
 
 jobs:
