@@ -31,6 +31,7 @@ commands:
     steps:
       - run:
           name: Revert migrations
+          when: on_fail
           # Add when this will run
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
@@ -47,7 +48,6 @@ commands:
               npm run migrations:revert
               echo "Migration reverted"
             fi
-
 
 jobs:
   build-frontend:
@@ -436,8 +436,13 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            apk add --update tar gzip jq npm curl
+            pip install awscli
+
+      - run:
+          name: Install Ansible
+          command: |
             apk add --update ansible
-            apk add --update tar
       
       - run:
           name: Deploy backend
