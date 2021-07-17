@@ -596,7 +596,6 @@ jobs:
 
               echo "Deleting S3 bucket"
               aws s3 rb "s3://udapeople-${OldWorkflowID}" 
-
             else
               echo "Nothing to Cleanup"
             fi
