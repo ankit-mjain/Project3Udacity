@@ -511,18 +511,45 @@ jobs:
             # export URL="http://udapeople-0c53ee2.s3-website.ap-south-1.amazonaws.com"
             echo $URL
 
-            #if curl -s ${URL} | grep "Welcome"
-            if curl -s ${URL} | grep "Welcome1"
+            if curl -s ${URL} | grep "Welcome"
             then
               echo "Frontend test successful"
             else
               echo "Frontend test failed"
-              return 1
             fi
       
       - destroy-environment
       - revert-migrations
 
+  cloudfront-update:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: python:3.7-alpine3.11
+    steps:
+      # Checkout code from git
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            apk add --update tar gzip jq npm curl
+            pip install awscli
+
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            # your code here
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+
+      # Here's where you will add some code to rollback on failure  
+      - destroy-environment
+      - revert-migrations
+      
 workflows:
   default:
     jobs:
@@ -558,3 +585,6 @@ workflows:
           requires:
           - deploy-frontend
           - deploy-backend
+      - cloudfront-update:
+          requires:
+          - smoke-test
