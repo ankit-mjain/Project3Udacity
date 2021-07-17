@@ -621,7 +621,8 @@ workflows:
     jobs:
       - build-frontend:
           context: slack-secrets
-      - build-backend 
+      - build-backend:
+          context: slack-secrets
       - test-frontend:
           requires: 
             - build-frontend
@@ -635,6 +636,9 @@ workflows:
           requires: 
             - test-backend 
       - deploy-infrastructure:
+          requires: 
+             - scan-frontend
+             - scan-backend
           filters:
             branches:
               only: [master]
