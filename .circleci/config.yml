@@ -19,10 +19,10 @@ commands:
 
 
             echo "Deleting Frontend Stack - udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
-            aws s3 cloudformation delete-stack udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
             echo "Deleting Backend Stack - udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
-            aws s3 cloudformation delete-stack udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -36,6 +36,8 @@ commands:
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             export SUCCESS=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/MIGRATION_STATUS_${CIRCLE_WORKFLOW_ID:0:7})
             echo "$SUCCESS"
+
+            echo "Migration revert started! "
 
             # SUCCESS = 1
             if(( $SUCCESS=="Migration Success" )); 
