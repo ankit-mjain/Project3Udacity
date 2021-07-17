@@ -569,6 +569,10 @@ jobs:
       # Checkout code from git
       - checkout
       - run:
+          name: Install dependencies
+          command: |
+            yum -y install tar gzip jq npm 
+      - run:
           name: Get old stack workflow id & remove the stacks
           command: |
             # your code here
@@ -576,7 +580,7 @@ jobs:
             # export STACKS=[] #put the list of stacks here
 
             export OldWorkflowID=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request \
-              GET https://api.memstash.io/values/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7}
+              GET https://api.memstash.io/values/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
 
             # export OldWorkflowID=$(aws cloudformation \
             #  list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
@@ -629,28 +633,52 @@ workflows:
       # - scan-backend:
       #     requires: 
       #       - test-backend 
-      - deploy-infrastructure
+      - deploy-infrastructure:
+          filters:
+            branches:
+              only: [master]
       - configure-infrastructure:
            requires: 
              - deploy-infrastructure
+          filters:
+            branches:
+              only: [master]
       - run-migrations:
            requires: 
             - configure-infrastructure
+          filters:
+            branches:
+              only: [master]
       - deploy-frontend:
           requires: 
             - deploy-infrastructure
             - configure-infrastructure
+          filters:
+            branches:
+              only: [master]
       - deploy-backend:
           requires: 
             - deploy-infrastructure
             - configure-infrastructure
+          filters:
+            branches:
+              only: [master]
       - smoke-test:
           requires:
-          - deploy-frontend
-          - deploy-backend
+            - deploy-frontend
+            - deploy-backend
+          filters:
+            branches:
+              only: [master]
       - cloudfront-update:
           requires:
           - smoke-test
+          filters:
+            branches:
+              only: [master]
       - cleanup:
           requires:
             - cloudfront-update
+          filters:
+            branches:
+              only: [master]
