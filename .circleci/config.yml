@@ -596,8 +596,8 @@ jobs:
 
             echo WorkflowID ${CIRCLE_WORKFLOW_ID:0:7}
 
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-              --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+            export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
 
             echo STACKS ${STACKS[@]}
 
