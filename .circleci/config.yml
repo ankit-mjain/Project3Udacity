@@ -621,75 +621,75 @@ jobs:
 workflows:
   default:
     jobs:
-      #      - build-frontend:
-      #          context: slack-secrets
-      #      - build-backend:
-      #          context: slack-secrets
-      #      - test-frontend:
-      #          context: slack-secrets
-      #          requires: 
-      #            - build-frontend
-      #      - test-backend:
-      #          context: slack-secrets
-      #          requires: 
-      #            - build-backend
-      #      - scan-frontend:
-      #          context: slack-secrets
-      #          requires: 
-      #            - test-frontend
-      #      - scan-backend:
-      #          context: slack-secrets
-      #          requires: 
-      #            - test-backend 
+      - build-frontend:
+          context: slack-secrets
+      - build-backend:
+          context: slack-secrets
+      - test-frontend:
+          context: slack-secrets
+          requires: 
+            - build-frontend
+      - test-backend:
+          context: slack-secrets
+          requires: 
+            - build-backend
+      - scan-frontend:
+          context: slack-secrets
+          requires: 
+            - test-frontend
+      - scan-backend:
+          context: slack-secrets
+          requires: 
+            - test-backend 
+      - deploy-infrastructure:
+          requires: 
+             - scan-frontend
+             - scan-backend
+          filters:
+            branches:
+              only: [master]
+      - configure-infrastructure:
+          requires: 
+             - deploy-infrastructure
+          filters:
+            branches:
+              only: [master]
+      - run-migrations:
+          requires: 
+            - configure-infrastructure
+          filters:
+            branches:
+              only: [master]
+      - deploy-frontend:
+          requires: 
             - deploy-infrastructure
-      #          requires: 
-      #             - scan-frontend
-      #             - scan-backend
-      #          filters:
-      #            branches:
-      #              only: [master]
-            - configure-infrastructure:
-                requires: 
-                   - deploy-infrastructure
-                filters:
-                  branches:
-                    only: [master]
-      #      - run-migrations:
-      #          requires: 
-      #            - configure-infrastructure
-      #          filters:
-      #            branches:
-      #              only: [master]
-      #      - deploy-frontend:
-      #          requires: 
-      #            - deploy-infrastructure
-      #            - configure-infrastructure
-      #          filters:
-      #            branches:
-      #              only: [master]
-      #      - deploy-backend:
-      #          requires: 
-      #            - deploy-infrastructure
-      #            - configure-infrastructure
-      #          filters:
-      #            branches:
-      #              only: [master]
-      #      - smoke-test:
-      #          requires:
-      #            - deploy-frontend
-      #            - deploy-backend
-      #          filters:
-      #            branches:
-      #              only: [master]
-      #      - cloudfront-update:
-      #          requires:
-      #          - smoke-test
-      #          filters:
-      #            branches:
-      #              only: [master]
-      #      - cleanup:
-      #          requires:
-      #            - cloudfront-update
-      #          filters:
-      #            branches:
-      #              only: [master]
+            - configure-infrastructure
+          filters:
+            branches:
+              only: [master]
+      - deploy-backend:
+          requires: 
+            - deploy-infrastructure
+            - configure-infrastructure
+          filters:
+            branches:
+              only: [master]
+      - smoke-test:
+          requires:
+            - deploy-frontend
+            - deploy-backend
+          filters:
+            branches:
+              only: [master]
+      - cloudfront-update:
+          requires:
+          - smoke-test
+          filters:
+            branches:
+              only: [master]
+      - cleanup:
+          requires:
+            - cloudfront-update
+          filters:
+            branches:
+              only: [master]
