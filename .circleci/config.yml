@@ -593,6 +593,7 @@ jobs:
             #  --no-paginate --output text)
             
             echo OldWorkflowID ${OldWorkflowID}
+
             echo WorkflowID ${CIRCLE_WORKFLOW_ID:0:7}
 
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
@@ -602,22 +603,28 @@ jobs:
 
             # if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             # if [! -z "$OldWorkflowID"];
+            
             if [[ "$OldWorkflowID" != "${CIRCLE_WORKFLOW_ID:0:7}" ]];
             then
               # your code here
               echo "Inside If of Cleanup"
 
               echo "Deleting S3 bucket objects"
+
               aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
 
               echo "Deleting S3 bucket"
+
               aws s3 rb s3://udapeople-${OldWorkflowID} --force
 
               echo "Deleting backend stack"
+
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
 
               echo "Deleting frontend stack"
+
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+
             else
               echo "Nothing to Cleanup"
             fi
