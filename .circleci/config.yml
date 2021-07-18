@@ -584,13 +584,13 @@ jobs:
             # export OldWorkflowID="the id here"
             # export STACKS=[] #put the list of stacks here
 
-            # export OldWorkflowID=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request \
-            # GET https://api.memstash.io/values/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
+            export OldWorkflowID=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request \
+              GET https://api.memstash.io/values/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
 
             # export OldWorkflowID=$(aws cloudformation \
             #  list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
             #  --no-paginate --output text)
-            export OldWorkflowID="7244004"
+            
             echo OldWorkflowID ${OldWorkflowID}
             echo WorkflowID ${CIRCLE_WORKFLOW_ID:0:7}
 
