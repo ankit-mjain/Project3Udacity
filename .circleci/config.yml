@@ -42,7 +42,7 @@ commands:
             echo "Migration revert started! "
 
             # SUCCESS = 1
-            if(( SUCCESS=="1" )) 
+            if (( SUCCESS=="1" ))  
             then
             #  Add revert code here. You can find this in the Getting Started section.
               cd ./backend
@@ -495,7 +495,8 @@ jobs:
           name: Get backend url & conduct smoke test
           command: |
             # your code here
-            export BACKEND_IP=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7})
+            export BACKEND_IP=$(curl -H "token: cb217923-dfdf-4461-ad7e-1211c8a6f80f" --request \
+                    GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7})
             echo $BACKEND_IP
 
             export ENDPOINT="http://$BACKEND_IP:3030/api/status"
@@ -596,11 +597,12 @@ jobs:
 
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+
             echo STACKS ${STACKS[@]}
 
             # if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-            if [[ "$OldWorkflowID" != "${CIRCLE_WORKFLOW_ID:0:7}" ]];
             # if [! -z "$OldWorkflowID"];
+            if [[ "$OldWorkflowID" != "${CIRCLE_WORKFLOW_ID:0:7}" ]];
             then
               # your code here
               echo "Inside If of Cleanup"
@@ -619,6 +621,7 @@ jobs:
             else
               echo "Nothing to Cleanup"
             fi
+
       - destroy-environment
       - revert-migrations
 
@@ -626,75 +629,76 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend:
-          context: slack-secrets
-      - build-backend:
-          context: slack-secrets
-      - test-frontend:
-          context: slack-secrets
-          requires: 
-            - build-frontend
-      - test-backend:
-          context: slack-secrets
-          requires: 
-            - build-backend
-      - scan-frontend:
-          context: slack-secrets
-          requires: 
-            - test-frontend
-      - scan-backend:
-          context: slack-secrets
-          requires: 
-            - test-backend 
-      - deploy-infrastructure:
-          requires: 
-             - scan-frontend
-             - scan-backend
-          filters:
-            branches:
-              only: [master]
-      - configure-infrastructure:
-          requires: 
-             - deploy-infrastructure
-          filters:
-            branches:
-              only: [master]
-      - run-migrations:
-          requires: 
-            - configure-infrastructure
-          filters:
-            branches:
-              only: [master]
-      - deploy-frontend:
-          requires: 
-            - deploy-infrastructure
-            - configure-infrastructure
-          filters:
-            branches:
-              only: [master]
-      - deploy-backend:
-          requires: 
-            - deploy-infrastructure
-            - configure-infrastructure
-          filters:
-            branches:
-              only: [master]
-      - smoke-test:
-          requires:
-            - deploy-frontend
-            - deploy-backend
-          filters:
-            branches:
-              only: [master]
-      - cloudfront-update:
-          requires:
-          - smoke-test
-          filters:
-            branches:
-              only: [master]
-      - cleanup:
-          requires:
-            - cloudfront-update
-          filters:
-            branches:
-              only: [master]
+#      - build-frontend:
+#          context: slack-secrets
+#      - build-backend:
+#          context: slack-secrets
+#      - test-frontend:
+#          context: slack-secrets
+#          requires: 
+#            - build-frontend
+#      - test-backend:
+#          context: slack-secrets
+#          requires: 
+#            - build-backend
+#      - scan-frontend:
+#          context: slack-secrets
+#          requires: 
+#            - test-frontend
+#      - scan-backend:
+#          context: slack-secrets
+#          requires: 
+#            - test-backend 
+#      - deploy-infrastructure:
+#          requires: 
+#             - scan-frontend
+#             - scan-backend
+#          filters:
+#            branches:
+#              only: [master]
+#      - configure-infrastructure:
+#          requires: 
+#             - deploy-infrastructure
+#          filters:
+#            branches:
+#              only: [master]
+#      - run-migrations:
+#          requires: 
+#            - configure-infrastructure
+#          filters:
+#            branches:
+#              only: [master]
+#      - deploy-frontend:
+#          requires: 
+#            - deploy-infrastructure
+#            - configure-infrastructure
+#          filters:
+#            branches:
+#              only: [master]
+#      - deploy-backend:
+#          requires: 
+#            - deploy-infrastructure
+#            - configure-infrastructure
+#          filters:
+#            branches:
+#              only: [master]
+#      - smoke-test:
+#          requires:
+#            - deploy-frontend
+#            - deploy-backend
+#          filters:
+#            branches:
+#              only: [master]
+#      - cloudfront-update:
+#          requires:
+#          - smoke-test
+#          filters:
+#            branches:
+#              only: [master]
+      - cleanup
+#      - cleanup:
+#          requires:
+#            - cloudfront-update
+#          filters:
+#            branches:
+#              only: [master]
