@@ -221,14 +221,17 @@ jobs:
   deploy-infrastructure:
     docker:
       # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
+      # - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       # Checkout code from git 
       - checkout
       - run:
           name: Install dependencies
           command: |
-            yum -y install tar gzip jq npm 
+            # yum -y install tar gzip jq npm 
+            apk add --update tar gzip jq npm curl
+            pip install awscli
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -564,13 +567,16 @@ jobs:
   cleanup:
     docker:
       # Docker image here
-      - image: amazon/aws-cli
+      # - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            yum -y install tar gzip jq npm 
+            # yum -y install tar gzip jq npm 
+            apk add --update tar gzip jq npm curl
+            pip install awscli
       - run:
           name: Get old stack workflow id & remove the stacks
           command: |
