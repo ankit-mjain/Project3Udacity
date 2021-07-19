@@ -604,7 +604,8 @@ jobs:
             # if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             # if [! -z "$OldWorkflowID"];
             
-            if [[ "$OldWorkflowID" != "${CIRCLE_WORKFLOW_ID:0:7}" ]];
+            # if [[ "$OldWorkflowID" != "${CIRCLE_WORKFLOW_ID:0:7}" ]];
+            if [[! -z "$OldWorkflowID"]];
             then
               # your code here
               echo "Inside If of Cleanup"
